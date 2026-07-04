@@ -1,0 +1,22 @@
+on:
+  workflow_dispatch:
+  push:
+  schedule:
+    - cron: '07 10 * * 5'
+      timezone: "America/New_York"
+jobs:
+  container:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Build OCI image
+        env:
+          ACTOR: ${{ github.actor }}
+          IMAGE: ${{ github.repository }}
+          REGISTRY: ghcr.io
+          REGISTRY_PACKAGE_RW: ${{ secrets.GITHUB_TOKEN }}
+        run: ./build.sh
