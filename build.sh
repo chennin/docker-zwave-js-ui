@@ -19,8 +19,10 @@ NODE_VER=$(buildah --storage-driver "$STORAGE_DRIVER" --isolation "$BUILDAH_ISOL
 CONT_VER="${VERS}_${NODE_VER}" && \
 CONT_WITH_VER="${CONT_LATEST%%:*}:${CONT_VER//[+~]/_}" && \
 echo "Container version: ${CONT_WITH_VER}" && \
-buildah --storage-driver "$STORAGE_DRIVER" tag "$CONT_LATEST" "$CONT_WITH_VER" && \
-buildah --storage-driver "$STORAGE_DRIVER" images && \
 echo "${REGISTRY_PACKAGE_RW}" | buildah login --password-stdin -u "${ACTOR}" "${REGISTRY}" && \
-buildah --storage-driver $STORAGE_DRIVER push "${CONT_LATEST}" && \
-buildah --storage-driver $STORAGE_DRIVER push "${CONT_WITH_VER}"
+for i in "$CONT_WITH_VER" "$VERS"; do
+  buildah --storage-driver "$STORAGE_DRIVER" tag "$CONT_LATEST" "$i" && \
+  buildah --storage-driver "$STORAGE_DRIVER" push "$i"
+done && \
+buildah --storage-driver "$STORAGE_DRIVER" push "${CONT_LATEST}" && \
+buildah --storage-driver "$STORAGE_DRIVER" images
