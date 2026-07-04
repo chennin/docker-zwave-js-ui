@@ -20,7 +20,7 @@ CONT_VER="${VERS}_${NODE_VER}" && \
 CONT_WITH_VER="${CONT_LATEST%%:*}:${CONT_VER//[+~]/_}" && \
 echo "Container version: ${CONT_WITH_VER}" && \
 echo "${REGISTRY_PACKAGE_RW}" | buildah login --password-stdin -u "${ACTOR}" "${REGISTRY}" && \
-for i in "$CONT_WITH_VER" "$VERS"; do
+for i in "$CONT_WITH_VER" "${CONT_WITH_VER//:*}:${VERS}"; do
   buildah --storage-driver "$STORAGE_DRIVER" tag "$CONT_LATEST" "$i" && \
   buildah --storage-driver "$STORAGE_DRIVER" push "$i"
 done && \
