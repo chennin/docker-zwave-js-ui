@@ -9,7 +9,7 @@ VERS=$(curl -fsm4 https://raw.githubusercontent.com/zwave-js/zwave-js-ui/refs/he
 git clone --depth=1  -c advice.detachedHead=false --single-branch --branch "v${VERS}"  https://github.com/zwave-js/zwave-js-ui.git && cd zwave-js-ui && \
 npm config set min-release-age=7 && \
 buildah --storage-driver "$STORAGE_DRIVER" --isolation "$BUILDAH_ISOLATION" bud -t "$CONT_LATEST" --pull=missing \
-        --build-arg NODE_VERSION=24 -f docker/dockerfile && \
+        --build-arg NODE_VERSION=24 -f docker/Dockerfile && \
 buildah --storage-driver "$STORAGE_DRIVER" from --pull=never --name version-checker "$CONT_LATEST" && \
 NODE_VER=$(buildah --storage-driver "$STORAGE_DRIVER" --isolation "$BUILDAH_ISOLATION" run version-checker node -v) && \
 CONT_VER="${VERS}_${NODE_VER}" && \
