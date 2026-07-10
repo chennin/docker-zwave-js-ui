@@ -4,12 +4,14 @@ export DEBIAN_FRONTEND=noninteractive
 export STORAGE_DRIVER=vfs
 export BUILDAH_ISOLATION=chroot
 export NODE_VERSION=24
+export NODE_DISABLE_COMPILE_CACHE=1
 
 cd $(dirname "$0")
 sudo apt-get update && sudo apt-get -y --no-install-recommends install git ca-certificates curl buildah netavark jq && \
 VERS=$(curl -fsm4 https://raw.githubusercontent.com/zwave-js/zwave-js-ui/refs/heads/master/package.json | jq -r .version) && \
 git clone --depth=1  -c advice.detachedHead=false --single-branch --branch "v${VERS}"  https://github.com/zwave-js/zwave-js-ui.git && cd zwave-js-ui && \
 npm config set min-release-age=7 && \
+npm config --logs-max 0 set logs-max=0 && \
 buildah --storage-driver "$STORAGE_DRIVER" --isolation "$BUILDAH_ISOLATION" bud -t "$CONT_LATEST" --pull=missing \
         --label VERSION_ZWAVE_JS_UI="$VERS" \
         --label VERSION_NODE="${NODE_VERSION}" \
